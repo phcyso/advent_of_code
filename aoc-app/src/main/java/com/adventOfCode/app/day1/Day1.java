@@ -1,3 +1,5 @@
+package com.adventOfCode.app.day1;
+
 import java.io.BufferedReader;
 import java.util.List;
 import java.io.FileReader;
@@ -6,16 +8,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Day1 {
-  public static void main(String[] args) {
-    // Read the input file
-    String[] lines = readlines("input.txt");
-    // String[] lines = readlines("input_test.txt");
 
+  public static void Run() {
+    String[] lines = readlines("inputs/day1.txt");
+    RunLines(lines);
+  }
+
+  public static void RunLines(String[] inputLines) {
     // loop through the lines
     ArrayList<Integer> left = new ArrayList<Integer>();
     ArrayList<Integer> right = new ArrayList<Integer>();
 
-    for (String line : lines) {
+    for (String line : inputLines) {
       // split the lines into two numbers and fill the left and right arrays
       String[] parts = line.split("\\s+");
       // System.out.println(parts[0] + " " + parts[1]);

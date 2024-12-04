@@ -10,16 +10,9 @@ import java.util.regex.Pattern;
 
 import com.adventOfCode.app.Result;
 
-/*
- * X.{140}M.{140}A.{140}S
-S.{140}A.{140}M.{140}X
-
-X.{141}M.{141}A.{141}S
-S.{141}A.{141}M.{141}X
-
-XMAS|SAMX
+/**
+ * Helper class to store the pattern and offset for a word search direction
  */
-
 class WordSearchPattern {
   String pattern;
   int offset;

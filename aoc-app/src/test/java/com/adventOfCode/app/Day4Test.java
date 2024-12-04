@@ -48,4 +48,12 @@ public class Day4Test {
     assertEquals(9, result.part2);
   }
 
+  @Test
+  public void fullTest() {
+    Result result = Day4.Run();
+
+    assertEquals(2517, result.part1);
+    assertEquals(1960, result.part2);
+  }
+
 }

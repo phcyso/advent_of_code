@@ -20,65 +20,83 @@ S.{141}A.{141}M.{141}X
 XMAS|SAMX
  */
 
+class WordSearchPattern {
+  String pattern;
+  int offset;
+
+  public WordSearchPattern(String pattern, int offset) {
+    this.pattern = pattern;
+    this.offset = offset;
+  }
+
+  public String format(int lineLength) {
+    return String.format(pattern, (lineLength + offset));
+  }
+}
+
 public class Day4 {
-  public static void Run() {
+  public static Result Run() {
     System.out.println("Day 4");
     String[] lines = readlines("inputs/day4.txt");
     Result result = RunLines(lines);
     result.print();
+    return result;
   }
 
   public static Result RunLines(String[] inputLines) {
-    // part 1
-    // put all lines into one string
-    int l = inputLines[0].length();
-
+    // put all lines into one string and grab the length of the first line
+    int lineLength = inputLines[0].length();
     String bigLine = String.join(" ", inputLines);
-    // create a regex pattern to match the words
-    Pattern vert1 = Pattern.compile("X.{" + l + "}M.{" + l + "}A.{" + l + "}S");
-    Pattern vert2 = Pattern.compile("S.{" + l + "}A.{" + l + "}M.{" + l + "}X");
-    Pattern diag1 = Pattern
-        .compile("X.{" + (l + 1) + "}M.{" + (l + 1) + "}A.{" + (l + 1) + "}S");
-    Pattern diag2 = Pattern
-        .compile("S.{" + (l + 1) + "}A.{" + (l + 1) + "}M.{" + (l + 1) + "}X");
-    Pattern diag3 = Pattern
-        .compile("X.{" + (l - 1) + "}M.{" + (l - 1) + "}A.{" + (l - 1) + "}S");
-    Pattern diag4 = Pattern
-        .compile("S.{" + (l - 1) + "}A.{" + (l - 1) + "}M.{" + (l - 1) + "}X");
-    Pattern horz1 = Pattern.compile("XMAS");
-    Pattern horz2 = Pattern.compile("SAMX");
 
-    // run the regex patterns
-    int vert1Count = countMatches(bigLine, vert1);
-    int vert2Count = countMatches(bigLine, vert2);
-    int diag1Count = countMatches(bigLine, diag1);
-    int diag2Count = countMatches(bigLine, diag2);
-    int diag3Count = countMatches(bigLine, diag3);
-    int diag4Count = countMatches(bigLine, diag4);
-    int horz1Count = (int) horz1.matcher(bigLine).results().count();
-    int horz2Count = (int) horz2.matcher(bigLine).results().count();
+    // Part 1
+    WordSearchPattern[] part1Patterns = {
+        p("X.{%1$d}M.{%1$d}A.{%1$d}S", 0),
+        p("S.{%1$d}A.{%1$d}M.{%1$d}X", 0),
+        p("X.{%1$d}M.{%1$d}A.{%1$d}S", 1),
+        p("S.{%1$d}A.{%1$d}M.{%1$d}X", 1),
+        p("X.{%1$d}M.{%1$d}A.{%1$d}S", -1),
+        p("S.{%1$d}A.{%1$d}M.{%1$d}X", -1),
+        p("XMAS", 0),
+        p("SAMX", 0),
+    };
 
-    int part1Result = vert1Count + vert2Count + diag1Count + diag2Count + diag3Count + diag4Count + horz1Count
-        + horz2Count;
+    int part1Result = 0;
+    for (WordSearchPattern pattern : part1Patterns) {
+      part1Result += countMatches(bigLine, pattern, lineLength);
+    }
 
     // Part 2
+    WordSearchPattern[] part2Patterns = {
+        p("M.S.{%1$d}A.{%1$d}M.S", -1),
+        p("S.M.{%1$d}A.{%1$d}S.M", -1),
+        p("S.S.{%1$d}A.{%1$d}M.M", -1),
+        p("M.M.{%1$d}A.{%1$d}S.S", -1),
+    };
 
-    Pattern p2v1 = Pattern.compile("M.S.{" + (l - 1) + "}A.{" + (l - 1) + "}M.S");
-    Pattern p2v2 = Pattern.compile("S.M.{" + (l - 1) + "}A.{" + (l - 1) + "}S.M");
-    Pattern p2v3 = Pattern.compile("S.S.{" + (l - 1) + "}A.{" + (l - 1) + "}M.M");
-    Pattern p2v4 = Pattern.compile("M.M.{" + (l - 1) + "}A.{" + (l - 1) + "}S.S");
-
-    int p2v1Count = countMatches(bigLine, p2v1);
-    int p2v2Count = countMatches(bigLine, p2v2);
-    int p2v3Count = countMatches(bigLine, p2v3);
-    int p2v4Count = countMatches(bigLine, p2v4);
-
-    int part2Result = p2v1Count + p2v2Count + p2v3Count + p2v4Count;
+    int part2Result = 0;
+    for (WordSearchPattern pattern : part2Patterns) {
+      part2Result += countMatches(bigLine, pattern, lineLength);
+    }
 
     return new Result(part1Result, part2Result);
   }
 
-  private static int countMatches(String line, Pattern pattern) {
+  /**
+   * Count the number of matches in a line
+   * Takes a line and a pattern and returns the number of matches
+   * It expects the pattern to have at least one %1$d in it to be replaced with
+   * the length of the line and whatever offset the pattern has
+   * 
+   * @param line
+   * @param rawPattern
+   * @param lineLength
+   * @return
+   */
+  private static int countMatches(String line, WordSearchPattern rawPattern, int lineLength) {
+
+    String formattedRegex = rawPattern.format(lineLength);
+
+    Pattern pattern = Pattern.compile(formattedRegex);
     Matcher m = pattern.matcher(line);
     int searchFrom = 0;
     int count = 0;
@@ -104,5 +122,9 @@ public class Day4 {
       e.printStackTrace();
       return new String[0];
     }
+  }
+
+  private static WordSearchPattern p(String pattern, int offset) {
+    return new WordSearchPattern(pattern, offset);
   }
 }

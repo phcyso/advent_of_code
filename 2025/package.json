@@ -1,0 +1,29 @@
+{
+  "name": "2025",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "bin": {
+    "aoc-2025": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "app": "npm run build && node dist/index.js",
+    "preapp": "npm run build",
+    "app:dev": "tsx watch src/index.ts",
+    "dev": "tsx src/index.ts",
+    "clean": "rm -rf dist",
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "argus-ts": "^1.2.0"
+  }
+}

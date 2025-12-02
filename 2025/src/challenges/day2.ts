@@ -43,27 +43,17 @@ export function part2(): string {
     const end = Number(parts[1]);
 
     for (let pId = start; pId <= end; pId++) {
-      // how long is number?
       const numberofDigits = pId.toString().length
-
       // working down from half check all the other splits
       for (let d = Math.floor(numberofDigits / 2); d > 0; d--) {
-        if (!(numberofDigits % d === 0)) continue;
+        if (!(numberofDigits % d === 0)) continue; // Skip if indivisible
         const regex = new RegExp(`.{1,${d}}`, "g");
         const results = pId.toString().match(regex);
 
-        const allSame = results?.every((r) => r === results[0]);
-
-        if (allSame) {
-          console.log(`match: ${pId}`)
-        }
-        // console.log(`${allSame} - pid: ${pId} - d: ${d} - ${results} - ${results[0]} `)
-
-        if (allSame) {
+        if (results?.every((r) => r === results[0])) {
           invalidIdsSum += pId;
-          break;
+          break; // get out of this loop to only count a number once
         }
-
       }
     }
   })

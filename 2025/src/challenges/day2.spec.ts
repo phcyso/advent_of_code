@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const exampleInput = [
   "11-22",
@@ -14,23 +14,24 @@ const exampleInput = [
   "2121212118-2121212124",
 ];
 
-vi.mock("../helpers", () => ({
-  loadInputCommaSeperated: vi.fn(),
-}));
-
 let part1: typeof import("./day2").part1;
 let part2: typeof import("./day2").part2;
-let loadInputCommaSeperatedMock: Mock;
+let loadInputCommaSeperatedMock: ReturnType<typeof vi.fn>;
 
-describe("day2", () => {
+describe("day2 samples", () => {
   beforeEach(async () => {
     vi.resetModules();
-    const helpers = await import("../helpers");
+    loadInputCommaSeperatedMock = vi.fn();
+    vi.doMock("../helpers", () => ({
+      loadInputCommaSeperated: loadInputCommaSeperatedMock,
+    }));
     const day2 = await import("./day2");
-    loadInputCommaSeperatedMock = helpers.loadInputCommaSeperated as Mock;
     part1 = day2.part1;
     part2 = day2.part2;
-    loadInputCommaSeperatedMock.mockReset();
+  });
+
+  afterEach(() => {
+    vi.doUnmock("../helpers");
   });
 
   it("computes the provided example sum for part1", () => {
@@ -38,7 +39,6 @@ describe("day2", () => {
 
     const result = part1();
 
-    // AoC example treats the upper bound as inclusive; this expectation captures that contract.
     expect(result).toBe("invalidIdsSum : 1227775554");
     expect(loadInputCommaSeperatedMock).toHaveBeenCalledWith(2);
   });
@@ -50,5 +50,28 @@ describe("day2", () => {
 
     expect(result).toBe("invalidIdsSum : 4174379265");
     expect(loadInputCommaSeperatedMock).toHaveBeenCalledWith(2);
+  });
+});
+
+
+describe("day2 full results", () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.doUnmock("../helpers");
+    const day2 = await import("./day2");
+    part1 = day2.part1;
+    part2 = day2.part2;
+  });
+
+  it("computes the sum for part1", () => {
+    const result = part1();
+    expect(result).toBe("invalidIdsSum : 55916882972");
+  });
+
+  it("computes the sum for part2", () => {
+
+    const result = part2();
+
+    expect(result).toBe("invalidIdsSum : 76169125915");
   });
 });
